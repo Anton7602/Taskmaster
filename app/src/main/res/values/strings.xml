@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Taskmaster</string>
+    <string name="action_button_text">add_new_task_button</string>
 </resources>
