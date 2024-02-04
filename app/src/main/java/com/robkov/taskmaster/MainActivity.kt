@@ -1,26 +1,23 @@
 package com.robkov.taskmaster
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.google.firebase.database.getValue
 
 class MainActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
@@ -30,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var newTaskCardView: CardView
     private lateinit var taskNameEditText: EditText
-    private val itemList = mutableListOf<String>()
+    private val itemList = mutableListOf<Taskholder>()
     private val taskholderList = mutableListOf<Taskholder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,11 +35,30 @@ class MainActivity : AppCompatActivity() {
         bindViews()
         setUpRecyclerView()
 
-        database.child("Tasks").child("TestId").get().addOnSuccessListener {
-            Log.i("firebase", "Got value ${it.value}")
-        }.addOnFailureListener{
-            Log.e("firebase", "Error getting data", it)
-        }
+        database.addChildEventListener(object: ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val taskholder = snapshot.getValue<Taskholder>()
+                if (taskholder!=null) {
+                    taskholder.taskID = snapshot.key
+                    itemList.add(taskholder)
+                    recyclerView.adapter!!.notifyItemInserted(itemList.size - 1)
+                    Log.d("Debug","onChildAddedTriggered:" + snapshot.key + " " + taskholder.taskName)
+                }
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+        })
 
         addNewTaskButton.setOnClickListener{
             switchButtonsVisibility()
@@ -56,13 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         acceptNewTaskButton.setOnClickListener{
-            itemList.add(taskNameEditText.text.toString())
-            taskholderList.add(Taskholder(taskNameEditText.text.toString(), mutableListOf<Taskholder>()))
-            database.child("Tasks")
-                .child("TestId")
-                .setValue(Taskholder(taskNameEditText.text.toString(), mutableListOf<Taskholder>()))
-            //.child(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")).toString())
-            recyclerView.adapter!!.notifyItemInserted(itemList.size - 1)
+            //itemList.add(taskNameEditText.text.toString())
+            //recyclerView.adapter!!.notifyItemInserted(itemList.size - 1)
+            database.push().setValue(Taskholder(taskNameEditText.text.toString(), mutableListOf<Taskholder>()))
             taskNameEditText.hideKeyboard()
             taskNameEditText.setText("")
             switchButtonsVisibility()
@@ -95,7 +107,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-        database = Firebase.database.reference
+        val test = intent.getStringExtra("PressedItem")
+        database = Firebase.database.getReference("Tasks")
+        if (test!=null) {
+            Log.d("DEBUG", "Child name: $test")
+            //database = database.child(test)
+        }
         addNewTaskButton = findViewById(R.id.mna_addNewTask_btn)
         acceptNewTaskButton = findViewById(R.id.mna_acceptNewTask_btn)
         cancelNewTaskButton = findViewById(R.id.mna_cancelNewTask_btn)
@@ -107,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpRecyclerView() {
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        val adapter = TaskAdapter(itemList)
+        val adapter = TaskAdapter(itemList, this)
         recyclerView.adapter = adapter
     }
 }

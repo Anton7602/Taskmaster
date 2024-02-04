@@ -1,15 +1,18 @@
 package com.robkov.taskmaster
 
-import android.opengl.Visibility
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.view.isVisible
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskAdapter (private val itemList: List<String>) : RecyclerView.Adapter<CardViewHolder>() {
+class TaskAdapter (private val itemList: List<Taskholder>, private val context: Context) : RecyclerView.Adapter<CardViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.taskholder_card, parent, false)
         return CardViewHolder(view)
@@ -20,13 +23,20 @@ class TaskAdapter (private val itemList: List<String>) : RecyclerView.Adapter<Ca
     }
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-        val itemText = itemList[position]
-        holder.taskName.text = itemText
+        val bindedTaskholder = itemList[position]
+        holder.taskName.text = bindedTaskholder.taskName
+        holder.cardview.setOnClickListener{
+            Log.d("Debug", "Pressed item ${bindedTaskholder.taskName}")
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("PressedItem", bindedTaskholder.taskID)
+            startActivity(context, intent, null)
+        }
     }
 
 }
 
 class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val cardview: CardView = itemView.findViewById(R.id.tkh_taskholder_cdv)
     val taskName: TextView = itemView.findViewById(R.id.tkh_taskName_txv)
     val editText: EditText = itemView.findViewById(R.id.tkh_taskNameEdit_edt)
     fun switchEditTextVisibility() {
