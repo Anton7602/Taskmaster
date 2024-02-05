@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var newTaskCardView: CardView
     private lateinit var taskNameEditText: EditText
+    private lateinit var taskLabel: TextView
+    private var databaseLocation: MutableList<String>? = null
     private val itemList = mutableListOf<Taskholder>()
     private val taskholderList = mutableListOf<Taskholder>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,24 +110,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-        val test = intent.getStringExtra("PressedItem")
-        database = Firebase.database.getReference("Tasks")
-        if (test!=null) {
-            Log.d("DEBUG", "Child name: $test")
-            //database = database.child(test)
-        }
         addNewTaskButton = findViewById(R.id.mna_addNewTask_btn)
         acceptNewTaskButton = findViewById(R.id.mna_acceptNewTask_btn)
         cancelNewTaskButton = findViewById(R.id.mna_cancelNewTask_btn)
         newTaskCardView = findViewById(R.id.mna_taskholder_cdv)
         taskNameEditText = findViewById(R.id.mna_taskNameEdit_edt)
         recyclerView = findViewById(R.id.recyclerview)
+        taskLabel = findViewById(R.id.mna_taskLabel_txv)
+        database = Firebase.database.getReference("Tasks")
+        databaseLocation = intent.getStringArrayListExtra("DatabaseLocation")?.toMutableList()
+        if (databaseLocation!=null) {
+            Log.d("Debug", "databaseLocationCountInActivity ${databaseLocation!!.size}. Last key = ${databaseLocation!!.last()}")
+
+            databaseLocation!!.forEach {childAddress ->
+                database = database.child(childAddress).child("subtasks")
+            }
+            val taskName = intent.getStringExtra("TaskName")
+            if (taskName != null) {
+                taskLabel.text = taskName
+                taskLabel.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun setUpRecyclerView() {
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        val adapter = TaskAdapter(itemList, this)
+        val adapter = TaskAdapter(itemList, this, databaseLocation)
         recyclerView.adapter = adapter
     }
 }

@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskAdapter (private val itemList: List<Taskholder>, private val context: Context) : RecyclerView.Adapter<CardViewHolder>() {
+class TaskAdapter (private val itemList: List<Taskholder>, private val context: Context, private var databaseLocation: MutableList<String>?) : RecyclerView.Adapter<CardViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.taskholder_card, parent, false)
         return CardViewHolder(view)
@@ -28,7 +28,13 @@ class TaskAdapter (private val itemList: List<Taskholder>, private val context: 
         holder.cardview.setOnClickListener{
             Log.d("Debug", "Pressed item ${bindedTaskholder.taskName}")
             val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra("PressedItem", bindedTaskholder.taskID)
+            if (databaseLocation==null) {
+                databaseLocation = mutableListOf<String>()
+            }
+            databaseLocation!!.add(bindedTaskholder.taskID.toString())
+            Log.d("Debug", "databaseLocationCount ${databaseLocation!!.size}. Last key = ${databaseLocation!!.last()}")
+            intent.putStringArrayListExtra("DatabaseLocation", ArrayList(databaseLocation))
+            intent.putExtra("TaskName", bindedTaskholder.taskName)
             startActivity(context, intent, null)
         }
     }
