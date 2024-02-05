@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         acceptNewTaskButton.setOnClickListener{
             //itemList.add(taskNameEditText.text.toString())
             //recyclerView.adapter!!.notifyItemInserted(itemList.size - 1)
-            database.push().setValue(Taskholder(taskNameEditText.text.toString(), mutableListOf<Taskholder>()))
+            database.push().setValue(Taskholder(taskNameEditText.text.toString(), hashMapOf<String, Taskholder>()))
             taskNameEditText.hideKeyboard()
             taskNameEditText.setText("")
             switchButtonsVisibility()
@@ -138,5 +138,12 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = layoutManager
         val adapter = TaskAdapter(itemList, this, databaseLocation)
         recyclerView.adapter = adapter
+    }
+
+    override fun onBackPressed() {
+        if (databaseLocation!= null && databaseLocation!!.size>0) {
+            databaseLocation!!.removeAt(databaseLocation!!.size-1)
+        }
+        super.onBackPressed()
     }
 }
