@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskLabel: TextView
     private var databaseLocation: MutableList<String>? = null
     private val itemList = mutableListOf<Taskholder>()
-    private val taskholderList = mutableListOf<Taskholder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -43,16 +42,54 @@ class MainActivity : AppCompatActivity() {
                 val taskholder = snapshot.getValue<Taskholder>()
                 if (taskholder!=null) {
                     taskholder.taskID = snapshot.key
-                    itemList.add(taskholder)
-                    recyclerView.adapter!!.notifyItemInserted(itemList.size - 1)
+                    if (!taskholder.isCompleted) {
+                        itemList.add(0, taskholder)
+                    } else {
+                        val index = findFirstCompletedIndex()
+                        if (index>0) {
+                            itemList.add(index, taskholder)
+                        } else {
+                            itemList.add( taskholder)
+                        }
+                    }
+                    recyclerView.adapter!!.notifyItemInserted(0)
                     Log.d("Debug","onChildAddedTriggered:" + snapshot.key + " " + taskholder.taskName)
                 }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val taskholder = snapshot.getValue<Taskholder>()
+                if (taskholder!=null) {
+                    taskholder.taskID = snapshot.key
+                    val removedIndex = itemList.indexOf(taskholder)
+                    if (removedIndex>=0) {
+                        itemList.removeAt(removedIndex)
+                        recyclerView.adapter!!.notifyItemRangeRemoved(removedIndex,1)
+                    }
+                    var index = 0
+                    if (taskholder.isCompleted) {
+                        index = findFirstCompletedIndex()
+                        if (index<0) {
+                            index = itemList.size
+                        }
+                    }
+                    itemList.add(index, taskholder)
+                    recyclerView.adapter!!.notifyItemInserted(index)
+                    Log.d("Debug","onChildEditedTriggered:" + snapshot.key + " " + taskholder.taskName)
+                }
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                val taskholder = snapshot.getValue<Taskholder>()
+                if (taskholder!=null) {
+                    taskholder.taskID = snapshot.key
+                    val removedIndex = itemList.indexOf(taskholder)
+                    if (removedIndex>=0) {
+                        itemList.removeAt(removedIndex)
+                        recyclerView.adapter!!.notifyItemRangeRemoved(removedIndex,1)
+                        Log.d("Debug","onChildRemovedTriggered:" + snapshot.key + " " + taskholder.taskName)
+                    }
+                }
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -60,28 +97,52 @@ class MainActivity : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {
             }
-
         })
 
         addNewTaskButton.setOnClickListener{
             switchButtonsVisibility()
+            newTaskCardView.visibility = View.VISIBLE
             taskNameEditText.showKeyboard()
+
+            cancelNewTaskButton.setOnClickListener{
+                switchButtonsVisibility()
+                newTaskCardView.visibility = View.GONE
+                taskNameEditText.hideKeyboard()
+                taskNameEditText.setText("")
+            }
+            acceptNewTaskButton.setOnClickListener{
+                database.push().setValue(Taskholder(taskNameEditText.text.toString(), hashMapOf<String, Taskholder>()))
+                taskNameEditText.hideKeyboard()
+                taskNameEditText.setText("")
+                switchButtonsVisibility()
+                newTaskCardView.visibility = View.GONE
+            }
         }
+    }
+
+    fun editTask(textBox: EditText, editedTask: Taskholder, taskViewHolder: CardViewHolder) {
+        switchButtonsVisibility()
+        textBox.showKeyboard()
 
         cancelNewTaskButton.setOnClickListener{
             switchButtonsVisibility()
-            taskNameEditText.hideKeyboard()
-            taskNameEditText.setText("")
+            textBox.hideKeyboard()
+            textBox.setText(editedTask.taskName)
+            taskViewHolder.taskEditFinished(true)
         }
-
         acceptNewTaskButton.setOnClickListener{
-            //itemList.add(taskNameEditText.text.toString())
-            //recyclerView.adapter!!.notifyItemInserted(itemList.size - 1)
-            database.push().setValue(Taskholder(taskNameEditText.text.toString(), hashMapOf<String, Taskholder>()))
-            taskNameEditText.hideKeyboard()
-            taskNameEditText.setText("")
+            database.child(editedTask.taskID.toString()).child("taskName").setValue(textBox.text.toString())
+            textBox.hideKeyboard()
             switchButtonsVisibility()
+            taskViewHolder.taskEditFinished(false)
         }
+    }
+
+    private fun findFirstCompletedIndex(): Int {
+        for (i in 0..<itemList.size) {
+            if (itemList[i].isCompleted) return i
+        }
+        return -1
     }
 
     private fun switchButtonsVisibility() {
@@ -89,12 +150,10 @@ class MainActivity : AppCompatActivity() {
             addNewTaskButton.visibility = View.VISIBLE
             acceptNewTaskButton.visibility = View.INVISIBLE
             cancelNewTaskButton.visibility = View.INVISIBLE
-            newTaskCardView.visibility = View.INVISIBLE
         } else {
             addNewTaskButton.visibility = View.INVISIBLE
             acceptNewTaskButton.visibility = View.VISIBLE
             cancelNewTaskButton.visibility = View.VISIBLE
-            newTaskCardView.visibility = View.VISIBLE
         }
     }
 
@@ -136,7 +195,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpRecyclerView() {
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        val adapter = TaskAdapter(itemList, this, databaseLocation)
+        val adapter = TaskAdapter(itemList, this, databaseLocation, database, this)
         recyclerView.adapter = adapter
     }
 

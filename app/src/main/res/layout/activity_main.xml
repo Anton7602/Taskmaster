@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mna_mainLayout_cly"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#353535"
+    android:background="@color/greysh_black"
     tools:context=".MainActivity">
 
     <TextView
@@ -28,15 +29,19 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/mna_taskholder_cdv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="@color/blackish"
-        android:visibility="invisible"
-        app:layout_constraintDimensionRatio="w,2:11"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="18dp"
+        android:backgroundTint="@color/dark_black"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/dark_black"
+        app:cardCornerRadius="18dp"
+        app:layout_constraintDimensionRatio="w,2:12"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerview">
+        app:layout_constraintTop_toBottomOf="@+id/mna_taskLabel_txv">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mna_taskholderlayout_cly"
@@ -51,7 +56,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/mna_taskName_txv"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,24 +69,30 @@
                 android:autoSizeTextType="uniform"
                 android:text="@string/task_name"
                 android:textColor="@color/white"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/space2"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="16"
+                app:layout_constraintHorizontal_weight="25"
                 app:layout_constraintStart_toEndOf="@+id/space"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/mna_taskNameEdit_edt"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:autoSizeTextType="uniform"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:autofillHints="TaskName"
-                android:background="@color/blackish"
-                android:backgroundTint="@color/blackish"
+                android:background="@color/transparent"
+                android:backgroundTint="@color/transparent"
+                android:fontFamily="@font/itim_regular"
+                android:gravity="center_vertical"
                 android:hint="@string/taskname"
                 android:inputType="text"
+                android:paddingVertical="8dp"
                 android:textColor="@color/white"
+                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/mna_taskName_txv"
                 app:layout_constraintStart_toEndOf="@+id/space"
@@ -95,21 +106,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toEndOf="@+id/mna_taskName_txv"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:contentDescription="@string/taskbackground"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/task_frame_1" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
@@ -117,11 +117,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="-12dp"
+        android:background="@color/transparent"
+        android:backgroundTint="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/mna_addNewTask_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mna_taskLabel_txv" />
+        app:layout_constraintTop_toBottomOf="@+id/mna_taskholder_cdv"
+        app:layout_constraintVertical_weight="12" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/mna_addNewTask_btn"

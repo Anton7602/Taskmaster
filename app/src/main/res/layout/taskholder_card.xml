@@ -2,21 +2,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tkh_cardLayout_cly"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/blackish">
+    android:background="@color/greysh_black">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/tkh_taskholder_cdv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="18dp"
         android:layout_marginBottom="4dp"
-        android:backgroundTint="@color/blackish"
+        android:backgroundTint="@color/dark_black"
+        app:cardCornerRadius="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="w,2:11"
+        app:layout_constraintDimensionRatio="w,2:12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,7 +26,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tkh_taskholderlayout_cly"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="6dp">
 
             <Space
@@ -34,23 +36,26 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/tkh_taskName_txv"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tkh_taskName_txv"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
-                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/itim_regular"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
                 android:text="@string/task_name"
                 android:textColor="@color/white"
+                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/space2"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="16"
+                app:layout_constraintHorizontal_weight="25"
                 app:layout_constraintStart_toEndOf="@+id/space"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,13 +63,14 @@
                 android:id="@+id/tkh_taskNameEdit_edt"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:autoSizeTextType="uniform"
                 android:autofillHints="TaskName"
-                android:background="@color/blackish"
-                android:backgroundTint="@color/blackish"
-                android:hint="TaskName"
+                android:background="@color/dark_black"
+                android:backgroundTint="@color/dark_black"
+                android:fontFamily="@font/itim_regular"
+                android:hint="@string/task_name"
                 android:inputType="text"
                 android:textColor="@color/white"
+                android:textSize="24sp"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/tkh_taskName_txv"
@@ -79,7 +85,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toEndOf="@+id/tkh_taskName_txv"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,13 +93,75 @@
                 android:id="@+id/imageView"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:contentDescription="@string/taskbackground"
                 android:scaleType="fitXY"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/task_frame_1"
-                android:contentDescription="@string/taskbackground" />
+                app:srcCompat="@drawable/task_frame_1" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tkh_controlPanel_cdv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:backgroundTint="@color/dark_black"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/dark_black"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/tkh_controlPanel_lly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/tkh_complete_btn"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="#00FFFFFF"
+                        android:contentDescription="@string/button_complete"
+                        android:paddingHorizontal="12dp"
+                        android:scaleType="center"
+                        android:scaleX="1.5"
+                        android:scaleY="1.5"
+                        android:src="@drawable/complete_button_inactive" />
+
+                    <ImageButton
+                        android:id="@+id/tkh_edit_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:background="#00FFFFFF"
+                        android:contentDescription="@string/button_edit"
+                        android:paddingHorizontal="12dp"
+                        android:scaleType="center"
+                        android:scaleX="1.5"
+                        android:scaleY="1.5"
+                        android:src="@drawable/edit_button" />
+
+                    <ImageButton
+                        android:id="@+id/tkh_remove_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:background="#00FFFFFF"
+                        android:contentDescription="@string/button_remove"
+                        android:paddingHorizontal="12dp"
+                        android:scaleType="center"
+                        android:scaleX="1.5"
+                        android:scaleY="1.5"
+                        android:src="@drawable/delete_button" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

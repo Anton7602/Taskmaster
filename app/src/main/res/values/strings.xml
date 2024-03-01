@@ -8,4 +8,7 @@
     <string name="accept_new_task_button">accept_new_task_button</string>
     <string name="label">Label</string>
     <string name="taskname">TaskName</string>
+    <string name="button_complete">Button complete</string>
+    <string name="button_edit">Button edit</string>
+    <string name="button_remove">Button remove</string>
 </resources>

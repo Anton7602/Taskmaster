@@ -1,10 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Taskmaster" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimaryDark">@color/blackish</item>
-        <item name="colorPrimary">@color/blackish</item>
-        <item name="colorAccent">@color/blackish</item>
-        <item name="android:statusBarColor">@color/blackish</item>
+        <item name="colorPrimaryDark">@color/greysh_black</item>
+        <item name="colorPrimary">@color/greysh_black</item>
+        <item name="colorAccent">@color/greysh_black</item>
+        <item name="android:statusBarColor">@color/greysh_black</item>
     </style>
 
     <style name="Theme.Taskmaster" parent="Base.Theme.Taskmaster" />
